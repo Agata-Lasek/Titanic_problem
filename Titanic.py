@@ -89,3 +89,7 @@ y_pred = model.predict(test)                                                    
 y_final = (y_pred > 0.5).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
 output = pd.DataFrame({'PassengerId': test['PassengerId'], 'Survived': y_final})        # Zapisanie wyników do pliku CSV
 output.to_csv('did_they_survived.csv', index=False)
+
+
+did_they_survived = pd.read_csv('C:/Users/agata/Desktop/Sieci_neuronowe/did_they_survived.csv')
+print(did_they_survived.head(30))
