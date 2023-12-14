@@ -8,10 +8,11 @@ from keras.layers import Dense
 
 titanic = pd.read_csv('C:/Users/agata/Desktop/titanic.csv')
 test = pd.read_csv('C:/Users/agata/Desktop/test.csv')
-#df = titanic.append(test , ignore_index = True)             #laczy 2 ramy titanic i test i ignoruje indeksy obu ramek danych i przypisuje nowe indeksy od zera
-titanic.shape, test.shape, titanic.columns.values           # informacje o liczbie wierszy, kolumn oraz nazw kolumn dla titanic, test, i połączonej ramy danych df
+#df = titanic.append(test , ignore_index = True)        #laczy 2 ramy titanic i test i ignoruje indeksy obu ramek danych i przypisuje nowe indeksy od zera
+titanic.shape, test.shape, titanic.columns.values       # informacje o liczbie wierszy, kolumn oraz nazw kolumn dla titanic, test, i połączonej ramy danych df
 titanic['WithSb'] = titanic.apply(lambda row: '1' if row['SibSp'] == 1 or row['Parch'] == 1 else 0, axis=1)       # nowa kolumna 'WithSomebody' wykonujaca OR dla SibSp i Parch (jest z kims/sam)
-test['WithSb'] = test.apply(lambda row: '1' if row['SibSp'] == 1 or row['Parch'] == 1 else 0, axis=1)       
+test['WithSb'] = test.apply(lambda row: '1' if row['SibSp'] == 1 or row['Parch'] == 1 else 0, axis=1)      
+test['Survived'] = ''                                   #dodaje nową kolumnę 'Survived' do ramy danych test i wypełnia ją pustymi ciągami
 
 
 print(titanic.shape, test.shape, titanic.columns.values, test.columns.values)    #sprawdza czy kolumny sa odseparowane oraz ilosc wierszy/kolumn ('.shape' inny widok np (891, 13))
@@ -53,12 +54,18 @@ titanic = titanic.drop(labels=['Name','Cabin','Ticket','Fare','Embarked'], axis=
 model = Sequential()                                                               #Sequential służy do inicjalizacji sieci neuronowej
 model.summary()
 
-#model.add(Dense)  #tworze I warstwe sieci (ile wejsc)                             #Dense służy do dodawania warstw do sieci neuronowej.
-#model.add(Dense)  #tworze II warstwe sieci (ile wejsc)
-#model.add(Dense)  #tworze III warstwe sieci (ile wejsc)
-#model.add(Dense)  #tworze  IV warstwe sieci (ile wejsc)
+model.add(Dense(units=13, input_dim=13, activation='relu'))  #tworze I warstwe sieci (ile wejsc)                             #Dense służy do dodawania warstw do sieci neuronowej.
+model.add(Dense(units=7, activation='relu'))  #dwie warstwy ukryte
+model.add(Dense(units=7, activation='relu'))  
+model.add(Dense(units=1, activation='sigmoid'))  # Sigmoid dla problemu binarnej klasyfikacji, warstwa wyjsciowa
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+model.fit(titanic, batch_size = 32, epochs = 50)                                  #Trenowanie, czyli dane treningowe zostaną przetworzone 50 razy przez cały model
 
 
-#model.fit(titanic, batch_size = 32, epochs = 50)                                  #Trenowanie, czyli dane treningowe zostaną przetworzone 50 razy przez cały model
+#test jak sobie radzi siec  i zapisania ich do pliku CSV
+
+
+
 
 
