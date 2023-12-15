@@ -1,16 +1,16 @@
-import numpy as np          #używane do operacji na macierzach
+#import numpy as np          #używane do operacji na macierzach #import keras
 import pandas as pd         #używane do manipulacji danymi
-import keras
 from keras.models import Sequential
 from keras.layers import Dense
+import random
 
 #warstwa wejsciowa
 
 titanic = pd.read_csv('C:/Users/agata/Desktop/titanic.csv')
 test = pd.read_csv('C:/Users/agata/Desktop/test.csv')
-
-titanic['Age'] = titanic['Age'].fillna(titanic['Age'].median())         #aby uzupełnić brakujące dane w kolumnie 'Age'
-test['Age'] = test['Age'].fillna(titanic['Age'].median())
+        
+titanic['Age'] = titanic['Age'].fillna(random.uniform(0, 100))       #aby uzupełnić brakujące dane w kolumnie 'Age'
+test['Age'] = test['Age'].fillna(random.uniform(0, 100))            #randomowe liczby dziesietne w przedziale 0-100
 
 #df = titanic.append(test , ignore_index = True)        #laczy 2 ramy titanic i test i ignoruje indeksy obu ramek danych i przypisuje nowe indeksy od zera
 titanic.shape, test.shape, titanic.columns.values       # informacje o liczbie wierszy, kolumn oraz nazw kolumn dla titanic, test, i połączonej ramy danych df
@@ -20,6 +20,9 @@ test['WithSb'] = test.apply(lambda row: '1' if row['SibSp'] == 1 or row['Parch']
 #zmiana z ciagow znakow na liczby
 titanic['WithSb'] = titanic['WithSb'].astype(int)
 test['WithSb'] = test['WithSb'].astype(int)
+
+titanic['Age'] = titanic['Age'].astype(int)
+test['Age'] = test['Age'].astype(int)
 
 
 print(titanic.shape, test.shape, titanic.columns.values, test.columns.values)    #sprawdza czy kolumny sa odseparowane oraz ilosc wierszy/kolumn ('.shape' inny widok np (891, 13))
@@ -70,26 +73,33 @@ print(y_train.head)
 # Inicjalizacja modelu
 model = Sequential()                                                                    #Sequential służy do inicjalizacji sieci neuronowej
 
-model.add(Dense(units=5, input_dim=5, activation='relu'))                             #tworze I warstwe sieci (ile wejsc #Dense służy do dodawania warstw do sieci neuronowej.
-model.add(Dense(units=3, activation='relu'))                                            #dwie warstwy ukryte
-model.add(Dense(units=3, activation='relu'))  
+model.add(Dense(units=8, input_dim=5, activation='relu'))                             #tworze I warstwe sieci (ile wejsc #Dense służy do dodawania warstw do sieci neuronowej.
+model.add(Dense(units=5, activation='relu'))     
+model.add(Dense(units=5, activation='relu'))  #dwie warstwa ukryte
 model.add(Dense(units=1, activation='sigmoid'))                                         # Sigmoid dla problemu binarnej klasyfikacji, warstwa wyjsciowa
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])       # Kompilacja modelu
 
 #print('aaaaaaaaaaaaaaaaaaaaaaaaaaaa',X_train.shape)  #sprawdzenie poprawnosci
 #print('bbbbbbbbbbbbbbbbbbbbbbbbbbb',test.shape)
 
-model.fit(X_train, y_train, batch_size=32, epochs=50)                # Trenowanie modelu     #Trenowanie, czyli dane treningowe zostaną przetworzone 50 razy przez cały model
+model.fit(X_train, y_train, batch_size=32, epochs=100)                # Trenowanie modelu     #Trenowanie, czyli dane treningowe zostaną przetworzone 50 razy przez cały model
 
 
 #test jak sobie radzi siec  i zapisania ich do pliku CSV
 # Uzyskanie prognoz na danych testowych
 
 y_pred = model.predict(test)                                                            #do uzyskania prognoz na podstawie danych testowych test
-y_final = (y_pred > 0.5).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
+y_final = (y_pred > 0.35).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
 output = pd.DataFrame({'PassengerId': test['PassengerId'], 'Survived': y_final})        # Zapisanie wyników do pliku CSV
+# Dodanie kolumny z numerem indeksu dla osób, które według sieci neuronowej przeżyją
+output['PersonIndex'] = output.index
+
 output.to_csv('did_they_survived.csv', index=False)
 
-
+#sprawdzenie poprawnosci
 did_they_survived = pd.read_csv('C:/Users/agata/Desktop/Sieci_neuronowe/did_they_survived.csv')
-print(did_they_survived.head(30))
+print(did_they_survived)
+
+# Wypisanie numerów indeksów osób, które według sieci neuronowej przeżyją
+print("Osoby, które według sieci neuronowej przeżyją:")
+print(output[output['Survived'] == 1]['PersonIndex'])
