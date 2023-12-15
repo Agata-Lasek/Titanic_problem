@@ -89,7 +89,7 @@ model.fit(X_train, y_train, batch_size=32, epochs=100)                # Trenowan
 # Uzyskanie prognoz na danych testowych
 
 y_pred = model.predict(test)                                                            #do uzyskania prognoz na podstawie danych testowych test
-y_final = (y_pred > 0.35).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
+y_final = (y_pred > 0.38).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
 output = pd.DataFrame({'PassengerId': test['PassengerId'], 'Survived': y_final})        # Zapisanie wyników do pliku CSV
 # Dodanie kolumny z numerem indeksu dla osób, które według sieci neuronowej przeżyją
 output['PersonIndex'] = output.index
