@@ -73,9 +73,9 @@ print(y_train.head)
 # Inicjalizacja modelu
 model = Sequential()                                                                    #Sequential służy do inicjalizacji sieci neuronowej
 
-model.add(Dense(units=8, input_dim=5, activation='relu'))                             #tworze I warstwe sieci (ile wejsc #Dense służy do dodawania warstw do sieci neuronowej.
-model.add(Dense(units=5, activation='relu'))     
-model.add(Dense(units=5, activation='relu'))  #dwie warstwa ukryte
+model.add(Dense(units=8, input_dim=5, activation='relu'))                             #tworze I warstwe sieci (ile wejsc #Dense służy do dodawania warstw do sieci neuronowej. 
+model.add(Dense(units=4, activation='relu'))
+model.add(Dense(units=2, activation='relu'))  #dwie warstwa ukryte
 model.add(Dense(units=1, activation='sigmoid'))                                         # Sigmoid dla problemu binarnej klasyfikacji, warstwa wyjsciowa
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])       # Kompilacja modelu
 
@@ -89,10 +89,13 @@ model.fit(X_train, y_train, batch_size=32, epochs=100)                # Trenowan
 # Uzyskanie prognoz na danych testowych
 
 y_pred = model.predict(test)                                                            #do uzyskania prognoz na podstawie danych testowych test
-y_final = (y_pred > 0.38).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
+y_final = (y_pred > 0.5).astype(int).reshape(test.shape[0])                             #bedzie zyl jak szansa powyżej 50%
 output = pd.DataFrame({'PassengerId': test['PassengerId'], 'Survived': y_final})        # Zapisanie wyników do pliku CSV
 # Dodanie kolumny z numerem indeksu dla osób, które według sieci neuronowej przeżyją
 output['PersonIndex'] = output.index
+# Dodanie kolumny z szansą przeżycia
+output['SurvivalProbability'] = y_pred.flatten() * 100  # Procentowa szansa przeżycia
+
 
 output.to_csv('C:/Users/agata/Desktop/Sieci_neuronowe/did_they_survived.csv', index=False)
 
@@ -102,4 +105,4 @@ print(did_they_survived)
 
 # Wypisanie numerów indeksów osób, które według sieci neuronowej przeżyją
 print("Osoby, które według sieci neuronowej przeżyją:")
-print(output[output['Survived'] == 1]['PersonIndex'])
+print(output[output['Survived'] == 1][['PersonIndex', 'SurvivalProbability']])
