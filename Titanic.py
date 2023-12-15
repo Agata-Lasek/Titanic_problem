@@ -6,8 +6,8 @@ import random
 
 #warstwa wejsciowa
 
-titanic = pd.read_csv('C:/Users/agata/Desktop/Sieci_neuronowe/titanic.csv')
-test = pd.read_csv('C:/Users/agata/Desktop/Sieci_neuronowe/test.csv')
+titanic = pd.read_csv('C:/Users/agata/Desktop/titanic.csv')
+test = pd.read_csv('C:/Users/agata/Desktop/test.csv')
         
 titanic['Age'] = titanic['Age'].fillna(random.uniform(0, 100))       #aby uzupełnić brakujące dane w kolumnie 'Age'
 test['Age'] = test['Age'].fillna(random.uniform(0, 100))            #randomowe liczby dziesietne w przedziale 0-100
@@ -97,7 +97,7 @@ output['PersonIndex'] = output.index
 output.to_csv('C:/Users/agata/Desktop/Sieci_neuronowe/did_they_survived.csv', index=False)
 
 #sprawdzenie poprawnosci
-did_they_survived = pd.read_csv('did_they_survived.csv')
+did_they_survived = pd.read_csv('C:/Users/agata/Desktop/Sieci_neuronowe/did_they_survived.csv')
 print(did_they_survived)
 
 # Wypisanie numerów indeksów osób, które według sieci neuronowej przeżyją
