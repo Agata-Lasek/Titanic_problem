@@ -15,13 +15,13 @@ def fillEmptyData(df : pd.DataFrame):
 
 def showPlots(df : pd.DataFrame):
     # ile procentowo osób przetrwało w pliku titanic.csv
-    # titanic.Survived.value_counts().plot.pie(figsize=(7, 6)).legend(labels=["Nie przeżyło", "Przeżyło"], loc='upper right', bbox_to_anchor=(1.2, 1))
+    # df.Survived.value_counts().plot.pie(figsize=(7, 6)).legend(labels=["Nie przeżyło", "Przeżyło"], loc='upper right', bbox_to_anchor=(1.2, 1))
 
 
     # ile procentowo osób przetrwało na bazie klasy biletu który posiadali w pliku titanic.csv
-    pclass_1_survivor_percentage = (df[df.Pclass == 1].Survived == 1).value_counts().iloc[1] / len(df[df.Pclass == 1]) * 100
-    pclass_2_survivor_percentage = (df[df.Pclass == 2].Survived == 1).value_counts().iloc[1] / len(df[df.Pclass == 2]) * 100
-    pclass_3_survivor_percentage = (df[df.Pclass == 3].Survived == 1).value_counts().iloc[1] / len(df[df.Pclass == 3]) * 100
+    pclass_1_survivor_percentage = (df[df.Pclass == 1].Survived == 1).value_counts().get(True) / len(df[df.Pclass == 1]) * 100
+    pclass_2_survivor_percentage = (df[df.Pclass == 2].Survived == 1).value_counts().get(True) / len(df[df.Pclass == 2]) * 100
+    pclass_3_survivor_percentage = (df[df.Pclass == 3].Survived == 1).value_counts().get(True) / len(df[df.Pclass == 3]) * 100
 
     pclass_perc_df = pd.DataFrame(
         { "Ile przetrwało":{"Klasa 1": pclass_1_survivor_percentage,"Klasa 2": pclass_2_survivor_percentage, "Klasa 3": pclass_3_survivor_percentage},  
@@ -31,30 +31,27 @@ def showPlots(df : pd.DataFrame):
 
     # ile osób przetrwało na bazie wieku w pliku titanic.csv
     df['Age_Range'] = pd.cut(df.Age, [0, 10, 20, 30, 40, 50, 60, 70, 80])
-    # sns.countplot(x = "Age_Range", hue = "Survived", data = titanic, palette=["C1", "C0"]).legend(labels = ["Nie przeżyło", "Przeżyło"])
+    # sns.countplot(x = "Age_Range", hue = "Survived", data = df, palette=["C1", "C0"]).legend(labels = ["Nie przeżyło", "Przeżyło"])
 
 
     # ile procentowo osób przetrwało na bazie płci w pliku titanic.csv
-    # titanic.Sex.value_counts().plot.pie(figsize=(7, 6)).legend(labels=["Mężczyźni", "Kobiety"], loc='upper right', bbox_to_anchor=(1.2, 1))
+    # df.Sex.value_counts().plot.pie(figsize=(7, 6)).legend(labels=["Mężczyźni", "Kobiety"], loc='upper right', bbox_to_anchor=(1.2, 1))
 
-    male_percentage = (df[df.Sex == 'male'].Survived == 1).value_counts().iloc[1]/len(df.Sex) * 100
-    female_percentage = (df[df.Sex == 'female'].Survived == 1).value_counts().iloc[1]/len(df.Sex) * 100
+    male_percentage = (df[df.Sex == 'male'].Survived == 1).value_counts().get(True) / df.Sex.value_counts().iloc[0] * 100
+    female_percentage = (df[df.Sex == 'female'].Survived == 1).value_counts().get(True) / df.Sex.value_counts().iloc[1] * 100
     sex_perc_df = pd.DataFrame({ "Ile przetrwało":{"Mężczyźni": male_percentage,"Kobiety": female_percentage},  "Ile nie przetrwało":{"Mężczyźni": 100-male_percentage,"Kobiety": 100-female_percentage}})
     # sex_perc_df.plot.bar(figsize=(10, 6)).set_title("Procentowe przetrwanie katastrofy na bazie płci")
 
-    # print((titanic[titanic.Sex == 'female'].Survived == 1).value_counts())
-    # print((titanic[titanic.Sex == 'male'].Survived == 1).value_counts())
-
 
     # ile procentowo osób przetrwało na bazie miejsca zaokrętowania w pliku titanic.csv
-    southampton_survivor_percentage = (df[df.Embarked == 'S'].Survived == 1).value_counts().iloc[1] / len(df[df.Embarked == 'S']) * 100
-    cherbourg_survivor_percentage = (df[df.Embarked == 'C'].Survived == 1).value_counts().iloc[1] / len(df[df.Embarked == 'C']) * 100
-    queenstown_survivor_percentage = (df[df.Embarked == 'Q'].Survived == 1).value_counts().iloc[1] / len(df[df.Embarked == 'Q']) * 100
+    southampton_survivor_percentage = (df[df.Embarked == 'S'].Survived == 1).value_counts().get(True) / len(df[df.Embarked == 'S']) * 100
+    cherbourg_survivor_percentage = (df[df.Embarked == 'C'].Survived == 1).value_counts().get(True) / len(df[df.Embarked == 'C']) * 100
+    queenstown_survivor_percentage = (df[df.Embarked == 'Q'].Survived == 1).value_counts().get(True) / len(df[df.Embarked == 'Q']) * 100
 
     embarked_perc_df = pd.DataFrame(
         { "Ile przetrwało":{"Southampton": southampton_survivor_percentage,"Cherbourg": cherbourg_survivor_percentage, "Queenstown": queenstown_survivor_percentage},  
         "Ile nie przetrwało":{"Southampton": 100-southampton_survivor_percentage,"Cherbourg": 100-cherbourg_survivor_percentage, "Queenstown": 100-queenstown_survivor_percentage}})
-    embarked_perc_df.plot.bar(figsize=(10, 8)).set_title("Procentowe przetrwanie katastrofy na bazie miejsca zaokrętowania")
+    # embarked_perc_df.plot.bar(figsize=(10, 8)).set_title("Procentowe przetrwanie katastrofy na bazie miejsca zaokrętowania")
 
     plt.show()
 
@@ -77,8 +74,8 @@ def main():
     titanic['Age'] = titanic['Age'].astype(int)
     test['Age'] = test['Age'].astype(int)
 
-    # # pomoc wizualna, sprawdza czy kolumny sa odseparowane oraz ilosc wierszy/kolumn ('.shape' inny widok np (891, 13))
-    # print(titanic.shape, test.shape, titanic.columns.values, test.columns.values) 
+    # pomoc wizualna, sprawdza czy kolumny sa odseparowane oraz ilosc wierszy/kolumn ('.shape' inny widok np (891, 13))
+    print(titanic.shape, test.shape, titanic.columns.values, test.columns.values) 
 
     # informacje dla warstw ukrytych (wybralam tylko 4 ale mozna poszezyc)
 
@@ -159,7 +156,7 @@ def main():
     survived_count = len(output[output['Survived'] == 1])                                  # sprawdzenie poprawności, Wyświetlenie liczby osób, które przeżyły
     print(f"\nLiczba osób, które według sieci neuronowej przeżyły: {survived_count}")
 
-    # showPlots() # wykresy dla pliku titanic.csv
+    # showPlots(titanic) # wykresy dla pliku titanic.csv
 
 if __name__ == '__main__':
     main()
